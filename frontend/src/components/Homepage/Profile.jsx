@@ -11,8 +11,17 @@ import {
   CircularProgress,
   Card,
   CardActions,
+  IconButton,
+  InputAdornment,
+  Alert,
 } from "@mui/material";
-import { PhotoCamera, Edit, LockReset } from "@mui/icons-material";
+import {
+  PhotoCamera,
+  Edit,
+  LockReset,
+  Visibility,
+  VisibilityOff,
+} from "@mui/icons-material";
 import ResponsiveAppBar from "./HomeAppbar";
 
 // Define custom theme
@@ -66,6 +75,7 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formValues, setFormValues] = useState({
     name: "",
     lastName: "",
@@ -77,6 +87,7 @@ const ProfilePage = () => {
     newPassword: "",
     confirmNewPassword: "",
   });
+  const [message, setMessage] = useState({ type: "", text: "" });
 
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -114,9 +125,9 @@ const ProfilePage = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${JSON.parse(
-            localStorage.getItem("userInfo")
-          ).token}`,
+          Authorization: `Bearer ${
+            JSON.parse(localStorage.getItem("userInfo")).token
+          }`,
         },
         body: JSON.stringify(updatedProfile),
       });
@@ -127,10 +138,13 @@ const ProfilePage = () => {
         localStorage.setItem("userInfo", JSON.stringify(data));
         setProfile(data);
         setIsEditing(false);
+        setMessage({ type: "success", text: "Profile updated successfully!" });
       } else {
+        setMessage({ type: "error", text: "Failed to update profile" });
         console.error("Failed to save profile", data);
       }
     } catch (error) {
+      setMessage({ type: "error", text: "Failed to update profile" });
       console.error("Failed to save profile", error);
     }
   };
@@ -140,14 +154,17 @@ const ProfilePage = () => {
     // Implement password reset logic here
     console.log("Password reset:", formValues);
     setIsResettingPassword(false);
+    setMessage({ type: "success", text: "Password reset successfully!" });
   };
 
   const handleEditProfile = () => {
     setIsEditing(true);
+    setMessage({ type: "", text: "" });
   };
 
   const handleResetPassword = () => {
     setIsResettingPassword(true);
+    setMessage({ type: "", text: "" });
   };
 
   const handleImageUpload = async (event) => {
@@ -176,6 +193,10 @@ const ProfilePage = () => {
     }
   };
 
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
   if (loading) {
     return (
       <Container component={Root} maxWidth="md">
@@ -185,12 +206,19 @@ const ProfilePage = () => {
   }
 
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <ResponsiveAppBar />
       <Container component={Root} maxWidth="md">
+        {message.text && (
+          <Alert
+            severity={message.type}
+            onClose={() => setMessage({ type: "", text: "" })}
+          >
+            {message.text}
+          </Alert>
+        )}
         <ProfileHeader>
           <StyledAvatar alt="Profile Picture" src={profile?.pic || ""} />
-
           <div>
             <Typography variant="h4">
               {profile?.name || "Name"}
@@ -320,28 +348,28 @@ const ProfilePage = () => {
                     onChange={handleImageUpload}
                   />
                   <label htmlFor="icon-button-file">
-                    <Button
-                      variant="contained"
+                    <IconButton
                       color="primary"
+                      aria-label="upload picture"
                       component="span"
-                      startIcon={<PhotoCamera />}
-                      style={{ marginTop: "8px" }}
                     >
-                      Upload Photo
-                    </Button>
+                      <PhotoCamera />
+                    </IconButton>
                   </label>
-                </Grid>
-                <Grid item xs={12}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    style={{ marginTop: "8px" }}
-                  >
-                    Save
-                  </Button>
+                  <Typography variant="body2" color="textSecondary">
+                    Upload Profile Picture
+                  </Typography>
                 </Grid>
               </Grid>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                style={{ marginTop: "16px" }}
+              >
+                Save Changes
+              </Button>
             </form>
           </StyledPaper>
         )}
@@ -359,58 +387,81 @@ const ProfilePage = () => {
                 <Grid item xs={12}>
                   <TextField
                     variant="outlined"
-                    required
                     fullWidth
                     name="currentPassword"
                     label="Current Password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     id="currentPassword"
                     value={formValues.currentPassword}
                     onChange={handleInputChange}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={toggleShowPassword}>
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
                     variant="outlined"
-                    required
                     fullWidth
                     name="newPassword"
                     label="New Password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     id="newPassword"
                     value={formValues.newPassword}
                     onChange={handleInputChange}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={toggleShowPassword}>
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
                     variant="outlined"
-                    required
                     fullWidth
                     name="confirmNewPassword"
                     label="Confirm New Password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     id="confirmNewPassword"
                     value={formValues.confirmNewPassword}
                     onChange={handleInputChange}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={toggleShowPassword}>
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 </Grid>
-                <Grid item xs={12}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    style={{ marginTop: "8px" }}
-                  >
-                    Reset Password
-                  </Button>
-                </Grid>
               </Grid>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                style={{ marginTop: "16px" }}
+              >
+                Reset Password
+              </Button>
             </form>
           </StyledPaper>
         )}
       </Container>
-    </>
+    </ThemeProvider>
   );
 };
 

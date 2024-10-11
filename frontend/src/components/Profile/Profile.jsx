@@ -81,14 +81,14 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       setLoading(true);
-      const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
       if (userInfo && userInfo.token) {
         try {
-          const response = await fetch('/api/users/profile', {
-            method: 'GET',
+          const response = await fetch("/api/users/profile", {
+            method: "GET",
             headers: {
-              'Authorization': `Bearer ${userInfo.token}`,
+              Authorization: `Bearer ${userInfo.token}`,
             },
           });
           const data = await response.json();
@@ -126,7 +126,7 @@ const ProfilePage = () => {
 
   const handleProfileSave = async (event) => {
     event.preventDefault();
-    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
     if (!userInfo || !userInfo.token) {
       console.error("No userInfo found");
@@ -134,11 +134,11 @@ const ProfilePage = () => {
     }
 
     try {
-      const response = await fetch('/api/users/updateProfile', {
-        method: 'PUT',
+      const response = await fetch("/api/users/updateProfile", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${userInfo.token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userInfo.token}`,
         },
         body: JSON.stringify({
           name: formValues.firstName,
@@ -175,7 +175,7 @@ const ProfilePage = () => {
 
   const handlePasswordReset = async (event) => {
     event.preventDefault();
-    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
     if (!userInfo || !userInfo.token) {
       console.error("No userInfo found");
@@ -183,11 +183,11 @@ const ProfilePage = () => {
     }
 
     try {
-      const response = await fetch('/api/users/updateProfile', {
-        method: 'PUT',
+      const response = await fetch("/api/users/updateProfile", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${userInfo.token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userInfo.token}`,
         },
         body: JSON.stringify({
           currentPassword: formValues.currentPassword,
@@ -208,7 +208,7 @@ const ProfilePage = () => {
 
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
-    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
     if (!file || !userInfo || !userInfo.token) {
       console.error("No file selected or userInfo not found");
@@ -220,19 +220,22 @@ const ProfilePage = () => {
     formData.append("upload_preset", "your_upload_preset"); // Cloudinary preset
 
     try {
-      const uploadResponse = await fetch('https://api.cloudinary.com/v1_1/your_cloud_name/image/upload', {
-        method: 'POST',
-        body: formData,
-      });
+      const uploadResponse = await fetch(
+        "https://api.cloudinary.com/v1_1/your_cloud_name/image/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       const result = await uploadResponse.json();
       const imageUrl = result.secure_url;
 
-      const updateResponse = await fetch('/api/users/updateProfile', {
-        method: 'PUT',
+      const updateResponse = await fetch("/api/users/updateProfile", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${userInfo.token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userInfo.token}`,
         },
         body: JSON.stringify({ pic: imageUrl }),
       });
@@ -264,14 +267,9 @@ const ProfilePage = () => {
       <ResponsiveAppBar />
       <Container component={Root} maxWidth="md">
         <ProfileHeader>
-          <StyledAvatar
-            alt="Profile Picture"
-            src={profile?.pic || ""}
-          />
+          <StyledAvatar alt="Profile Picture" src={profile?.pic || ""} />
           <div>
-            <Typography variant="h4">
-              {profile?.name || "Name"}
-            </Typography>
+            <Typography variant="h4">{profile?.name || "Name"}</Typography>
             <Typography variant="h6" color="textSecondary">
               {profile?.email || "Email"}
             </Typography>
@@ -301,7 +299,7 @@ const ProfilePage = () => {
               onClick={() => setIsResettingPassword(true)}
               startIcon={<LockReset />}
             >
-              Reset Password
+              Reset Password gg
             </Button>
           </CardActions>
           <input

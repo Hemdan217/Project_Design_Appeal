@@ -15,6 +15,7 @@ const initialState = {
 export const ContextProvider = ({ children }) => {
   const [state, setState] = useState(initialState);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
 
   // Example function to toggle states (You can add more logic here)
   const toggleChat = () => {
@@ -23,7 +24,12 @@ export const ContextProvider = ({ children }) => {
 
   return (
     <StateContext.Provider
-      value={{ isLoggedIn, setIsLoggedIn, state, toggleChat }}
+      value={{
+        isLoggedIn,
+        setIsLoggedIn,
+        userInfo,
+        setUserInfo,
+      }}
     >
       {children}
     </StateContext.Provider>

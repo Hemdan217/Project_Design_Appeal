@@ -16,6 +16,8 @@ import { useNavigate } from "react-router-dom";
 const pages = [
   { name: "Login", url: "/login" },
   { name: "Sign up", url: "/register" },
+  { name: "Sign up", url: "/register" },
+  { name: "Sign up", url: "/register" },
   { name: "Start Designing", url: "/myproject" },
 ];
 

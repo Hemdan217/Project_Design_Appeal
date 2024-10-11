@@ -25,10 +25,11 @@ import {
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import axios from "axios";
 import Loading from "../Loading/Loading";
+import { useStateContext } from "../../store/ContextProvider";
 
 export default function Signup() {
   const navigate = useNavigate();
-
+  const { setIsLoggedIn, setUserInfo } = useStateContext();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [pic, setPic] = useState(
@@ -93,6 +94,8 @@ export default function Signup() {
       console.log(data);
       setLoading(false);
       localStorage.setItem("userInfo", JSON.stringify(data));
+      setIsLoggedIn(true);
+      setUserInfo(data);
       navigate("/registration-success");
     } catch (error) {
       setLoading(false);
@@ -106,10 +109,10 @@ export default function Signup() {
       return;
     }
     setPicMessage(null);
-  
+
     const data = new FormData();
     data.append("file", pics);
-  
+
     fetch("/api/cloudinary/uploadimage", {
       method: "POST",
       body: data,
@@ -129,7 +132,6 @@ export default function Signup() {
         setPicMessage("Failed to upload image: " + err.message);
       });
   };
-  
 
   return (
     <Container component="main" maxWidth="md" sx={{ mt: 8 }}>

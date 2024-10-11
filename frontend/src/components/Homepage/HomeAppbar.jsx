@@ -11,10 +11,11 @@ import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { Link, useNavigate } from "react-router-dom";
+import { useStateContext } from "../../store/ContextProvider";
 
 function ResponsiveAppBar() {
   const navigate = useNavigate();
-  const [userInfo, setUserInfo] = useState(null);
+  const { userInfo, setUserInfo, setIsLoggedIn } = useStateContext();
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
@@ -22,6 +23,7 @@ function ResponsiveAppBar() {
     const storedUserInfo = localStorage.getItem("userInfo");
     if (storedUserInfo) {
       setUserInfo(JSON.parse(storedUserInfo));
+      setIsLoggedIn(true);
     }
   }, []);
 
@@ -48,6 +50,10 @@ function ResponsiveAppBar() {
           { name: "Login", url: "/login" },
           { name: "Sign up", url: "/register" },
         ]),
+    { name: "Voting", url: "/voting" },
+    { name: "Add review", url: "/addrate" },
+    { name: "View testimonials", url: "/ratings" },
+    { name: "Cart", url: "/cart" },
   ];
 
   return (

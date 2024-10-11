@@ -22,7 +22,7 @@ export default function Login() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setIsLoggedIn } = useStateContext();
+  const { setIsLoggedIn, setUserInfo } = useStateContext();
 
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -60,6 +60,8 @@ export default function Login() {
       console.log(data);
       localStorage.setItem("userInfo", JSON.stringify(data));
       setIsLoggedIn(true);
+      setUserInfo(data);
+
       setLoading(false);
 
       if (data.isAdmin) {

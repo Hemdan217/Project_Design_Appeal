@@ -291,7 +291,7 @@ const ChatBot = () => {
           elevation={6}
           style={{
             position: "fixed",
-            zIndex: 1000,
+            zIndex: 99999,
             bottom: 20,
             right: 20,
             width: 380,
