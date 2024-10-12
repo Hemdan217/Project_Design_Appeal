@@ -210,7 +210,7 @@ const Workstage = ({
       });
     }
   };
-  
+
   const handleAddToCart = async () => {
     if (!materialName) {
       alert("Please select material first");
@@ -310,8 +310,22 @@ const Workstage = ({
               width: "100%",
             }}
           >
-            <Button  variant="contained" color="error" sx={{ mt: 2 }} onClick={() => setIsModalOpen(false)}>Cancel</Button>
-            <Button  variant="contained" color="primary" sx={{ mt: 2 }} onClick={handleAddToCart}>Add to Cart</Button>
+            <Button
+              variant="contained"
+              color="error"
+              sx={{ mt: 2 }}
+              onClick={() => setIsModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ mt: 2 }}
+              onClick={handleAddToCart}
+            >
+              Add to Cart
+            </Button>
           </div>
         </div>
       </Modal>

@@ -2,6 +2,7 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const generateToken = require("../utils/generateToken");
+const bcrypt = require("bcryptjs");
 
 const registerUser = asyncHandler(async (req, res) => {
   const { name, lastName, email, password, pic, mobileNo, address } = req.body;
@@ -73,7 +74,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
   }
 });
 const getUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id); 
+  const user = await User.findById(req.params.id);
 
   if (user) {
     res.json(user);
@@ -122,15 +123,14 @@ const getAllUsers = asyncHandler(async (req, res) => {
   res.json(users);
 });
 
-
 // userController.js
 
 const deleteUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  
+
   // Find user by ID and delete
   const result = await User.findByIdAndDelete(id);
-  
+
   if (result) {
     res.json({ message: "User removed" });
   } else {
@@ -138,5 +138,39 @@ const deleteUser = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
 });
+const changePassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
 
-module.exports = { registerUser, authUser,getUser, getUserProfile, updateUserProfile, getAllUsers, deleteUser };
+  // Find the user by ID from the authenticated user's data (from the token)
+  const user = await User.findById(req.user._id);
+
+  if (user) {
+    // Check if the current password matches the user's current password
+    const isMatch = await user.matchPassword(currentPassword);
+
+    if (isMatch) {
+      // If passwords match, update to the new password
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(newPassword, salt);
+      await user.save();
+
+      res.json({ message: "Password updated successfully" });
+    } else {
+      res.status(400);
+      throw new Error("Current password is incorrect");
+    }
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+module.exports = {
+  registerUser,
+  authUser,
+  getUser,
+  getUserProfile,
+  updateUserProfile,
+  getAllUsers,
+  deleteUser,
+  changePassword,
+};

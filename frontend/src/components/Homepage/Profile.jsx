@@ -153,13 +153,46 @@ const ProfilePage = () => {
     }
   };
 
-  const handlePasswordReset = (event) => {
+  // ... rest of the code
+
+  const handlePasswordReset = async (event) => {
     event.preventDefault();
-    // Implement password reset logic here
-    console.log("Password reset:", formValues);
-    setIsResettingPassword(false);
-    setMessage({ type: "success", text: "Password reset successfully!" });
+    if (formValues.newPassword !== formValues.confirmNewPassword) {
+      setMessage({ type: "error", text: "Passwords do not match" });
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/users/profile", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            JSON.parse(localStorage.getItem("userInfo")).token
+          }`,
+        },
+        body: JSON.stringify({
+          currentPassword: formValues.currentPassword,
+          newPassword: formValues.newPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({ type: "success", text: "Password reset successfully!" });
+        setIsResettingPassword(false);
+      } else {
+        setMessage({ type: "error", text: "Failed to reset password" });
+        console.error("Failed to reset password", data);
+      }
+    } catch (error) {
+      setMessage({ type: "error", text: "Failed to reset password" });
+      console.error("Error resetting password", error);
+    }
   };
+
+  // ... rest of the JSX
 
   const handleEditProfile = () => {
     setIsEditing(true);

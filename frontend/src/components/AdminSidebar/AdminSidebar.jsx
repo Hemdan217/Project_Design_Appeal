@@ -212,9 +212,7 @@ function AdminSidebar(props) {
           open={Boolean(anchorElUser)}
           onClose={handleProfileMenuClose}
         >
-          <MenuItem onClick={() => navigate("/profile")}>
-            Profile Management
-          </MenuItem>
+          <MenuItem onClick={() => navigate("/")}>Home</MenuItem>
           <MenuItem
             onClick={() => {
               localStorage.removeItem("userInfo");

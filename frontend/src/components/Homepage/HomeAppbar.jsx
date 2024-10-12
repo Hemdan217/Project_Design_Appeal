@@ -50,10 +50,6 @@ function ResponsiveAppBar() {
           { name: "Login", url: "/login" },
           { name: "Sign up", url: "/register" },
         ]),
-    { name: "Voting", url: "/voting" },
-    { name: "Add review", url: "/addrate" },
-    { name: "View testimonials", url: "/ratings" },
-    { name: "Cart", url: "/cart" },
   ];
 
   return (
@@ -208,6 +204,21 @@ function ResponsiveAppBar() {
                     Cart
                   </Link>
                 </MenuItem>
+                {userInfo.isAdmin && (
+                  <MenuItem onClick={handleCloseUserMenu}>
+                    <Link
+                      to="/admin/AdminCards"
+                      style={{
+                        textDecoration: "none",
+                        color: "inherit",
+                        width: "100%",
+                        display: "block",
+                      }}
+                    >
+                      Dashboard
+                    </Link>
+                  </MenuItem>
+                )}
                 <MenuItem
                   onClick={() => {
                     localStorage.removeItem("userInfo");

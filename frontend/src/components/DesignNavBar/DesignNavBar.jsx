@@ -14,15 +14,17 @@ import UndoIcon from "@mui/icons-material/Undo";
 import RedoIcon from "@mui/icons-material/Redo";
 import TextField from "@mui/material/TextField";
 import AdbIcon from "@mui/icons-material/Adb";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useStateContext } from "../../store/ContextProvider";
 
-const settings = ["Profile",  "Logout"];
+const settings = ["Profile", "Logout"];
 
 function DesignNavBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [textFieldValue, setTextFieldValue] = React.useState("");
-
+  const { userInfo, setIsLoggedIn, setUserInfo } = useStateContext();
+  const navigate = useNavigate();
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -165,7 +167,7 @@ function DesignNavBar() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt="Remy Sharp" src={userInfo?.pic} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -184,11 +186,17 @@ function DesignNavBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              <MenuItem onClick={() => navigate("/")}>Home</MenuItem>
+              <MenuItem
+                onClick={() => {
+                  localStorage.removeItem("userInfo");
+                  setUserInfo(null);
+                  setIsLoggedIn(false);
+                  navigate("/");
+                }}
+              >
+                Logout
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
