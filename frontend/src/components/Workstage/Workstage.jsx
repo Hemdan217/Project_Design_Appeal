@@ -249,6 +249,44 @@ const Workstage = ({
       console.error("Error adding item to cart:", error);
     }
   };
+  const handleSaveDesign = async () => {
+    if (!materialName) {
+      alert("Please select material first");
+      return;
+    }
+    const userInfo = localStorage.getItem("userInfo");
+    const parsedUserInfo = JSON.parse(userInfo);
+
+    if (!parsedUserInfo || !parsedUserInfo._id) {
+      alert("User not logged in");
+      return;
+    }
+
+    try {
+      const newItem = {
+        userId: parsedUserInfo._id,
+        imageDataURL,
+        color,
+        materialName,
+        materialPrice,
+        colorPrice,
+        imagePrice,
+        textPrice,
+        text,
+        selectedApparel,
+        totalPrice,
+      };
+
+      console.log("Adding to cart:", newItem);
+
+      await axios.post("/api/cart/new_project", newItem);
+
+      setIsModalOpen(false);
+      // navigate("/cart");
+    } catch (error) {
+      console.error("Error adding item to cart:", error);
+    }
+  };
 
   return (
     <div ref={containerRef} style={{ width: "100%", height: "100%" }}>
@@ -317,6 +355,14 @@ const Workstage = ({
               onClick={() => setIsModalOpen(false)}
             >
               Cancel
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ mt: 2 }}
+              onClick={handleSaveDesign}
+            >
+              Save the design
             </Button>
             <Button
               variant="contained"

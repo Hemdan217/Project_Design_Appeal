@@ -1,9 +1,75 @@
 const express = require("express");
 const CartItem = require("../models/addtocart");
 const Material = require("../models/materialModel"); // Ensure the correct path
+const Project = require("../models/projectModel");
 const router = express.Router();
 
 // Add item to cart
+router.post("/cart/new_project", async (req, res) => {
+  try {
+    const {
+      userId,
+      color,
+      colorPrice,
+      imageDataURL,
+      imagePrice,
+      materialName,
+      materialPrice,
+      selectedApparel,
+      text = "",
+      textPrice,
+      totalPrice,
+      quantity = 0,
+    } = req.body;
+
+    // Validate required fields
+    if (
+      !userId ||
+      !materialName ||
+      !imageDataURL ||
+      !color ||
+      !materialPrice ||
+      !colorPrice ||
+      !imagePrice ||
+      !textPrice ||
+      !selectedApparel ||
+      !totalPrice
+    ) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    // Create new cart item
+    const newProjectItem = new Project({
+      userId,
+      imageDataURL,
+      color,
+      materialName,
+      materialPrice,
+      colorPrice,
+      imagePrice,
+      textPrice,
+      text,
+      selectedApparel,
+      totalPrice,
+      quantity,
+    });
+
+    await newProjectItem.save();
+    res.status(201).json(newProjectItem);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+router.get("/cart/new_project", async (req, res) => {
+  try {
+    const { userId } = req.query;
+
+    const Projects = await Project.find({ userId });
+    res.status(201).json(Projects);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
 router.post("/cart", async (req, res) => {
   try {
     const {
@@ -22,13 +88,24 @@ router.post("/cart", async (req, res) => {
     } = req.body;
 
     // Validate required fields
-    if (!userId ||!materialName || !imageDataURL || !color || !materialPrice || !colorPrice || !imagePrice || !textPrice || !selectedApparel || !totalPrice) {
+    if (
+      !userId ||
+      !materialName ||
+      !imageDataURL ||
+      !color ||
+      !materialPrice ||
+      !colorPrice ||
+      !imagePrice ||
+      !textPrice ||
+      !selectedApparel ||
+      !totalPrice
+    ) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     // Create new cart item
     const newCartItem = new CartItem({
-      userId, 
+      userId,
       imageDataURL,
       color,
       materialName,
@@ -114,7 +191,9 @@ router.post("/cart/checkout", async (req, res) => {
 
     // Here, you'd integrate with a payment gateway
     // For now, we'll just return the received data as a success message
-    res.status(200).json({ message: "Payment processed successfully!", cartItems, total });
+    res
+      .status(200)
+      .json({ message: "Payment processed successfully!", cartItems, total });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

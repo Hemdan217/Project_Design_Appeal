@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
@@ -6,6 +6,7 @@ import Container from "@mui/material/Container";
 import Typography from "./Typography";
 import { useNavigate } from "react-router-dom";
 import { useStateContext } from "../../store/ContextProvider";
+import axios from "axios";
 
 const ImageBackdrop = styled("div")(({ theme }) => ({
   position: "absolute",
@@ -66,7 +67,7 @@ const images = [
     url: "https://static.vecteezy.com/system/resources/previews/025/120/446/non_2x/multi-colored-abstract-pattern-on-fashionable-t-shirt-generated-by-ai-photo.jpg",
     title: "your",
     width: "38%",
-    path: "/voting", // Path for navigation
+    path: "/voting", // Path for navigationurl
   },
   {
     url: "https://t4.ftcdn.net/jpg/07/13/97/53/360_F_713975382_qzXFQBWRMbn5fDJi5jMvVDyRDZA0c36U.jpg",
@@ -78,10 +79,28 @@ const images = [
 
 export default function ProductCategories() {
   const navigate = useNavigate(); // Hook for navigation
-  const { isLoggedIn } = useStateContext();
+  const { isLoggedIn, userInfo } = useStateContext();
+  const [projects, setProjects] = useState([]);
   const handleClick = (path) => {
     navigate(path); // Navigate to the provided path
   };
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const response = await axios.get(
+          `/api/cart/new_project?userId=${userInfo?._id}`
+        );
+
+        setProjects(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching cart items:", error);
+      }
+    };
+    if (isLoggedIn) {
+      fetchCartItems();
+    }
+  }, [isLoggedIn]);
 
   return isLoggedIn ? (
     <>
@@ -96,11 +115,11 @@ export default function ProductCategories() {
           Your Projects
         </Typography>
         <Box sx={{ mt: 8, display: "flex", flexWrap: "wrap" }}>
-          {images.map((image) => (
+          {projects.map((image) => (
             <ImageIconButton
-              key={image.title}
+              key={image.imageDataURL}
               style={{
-                width: image.width,
+                width: "24%",
               }}
               onClick={() => handleClick(image.path)} // Handle click
             >
@@ -113,7 +132,7 @@ export default function ProductCategories() {
                   bottom: 0,
                   backgroundSize: "cover",
                   backgroundPosition: "center 40%",
-                  backgroundImage: `url(${image.url})`,
+                  backgroundImage: `url(${image.imageDataURL})`,
                 }}
               />
               <ImageBackdrop className="imageBackdrop" />
