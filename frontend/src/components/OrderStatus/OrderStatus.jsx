@@ -16,6 +16,7 @@ import {
   DialogContentText,
   DialogTitle,
   CircularProgress,
+  TablePagination,
 } from "@mui/material";
 
 const OrderStatus = () => {
@@ -24,6 +25,10 @@ const OrderStatus = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Pagination states
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -44,8 +49,9 @@ const OrderStatus = () => {
 
     fetchOrders();
   }, []);
+
   const handleUpdateState = async (orderId, newState) => {
-    console.log(`Updating order ${orderId} to state ${newState}`); // Debugging line
+    console.log(`Updating order ${orderId} to state ${newState}`);
     setIsLoading(true);
     try {
       const response = await fetch(`/api/orders/${orderId}`, {
@@ -53,14 +59,16 @@ const OrderStatus = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ state: newState }),
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to update order state");
       }
-  
+
       const updatedOrder = await response.json();
       setOrders((prevOrders) =>
-        prevOrders.map((order) => (order._id === orderId ? updatedOrder : order))
+        prevOrders.map((order) =>
+          order._id === orderId ? updatedOrder : order
+        )
       );
       handleClose();
     } catch (err) {
@@ -69,8 +77,6 @@ const OrderStatus = () => {
       setIsLoading(false);
     }
   };
-  
-  
 
   const handleClickOpen = (order) => {
     setSelectedOrder(order);
@@ -87,7 +93,22 @@ const OrderStatus = () => {
       handleUpdateState(selectedOrder._id, "rejected");
     }
   };
-  
+
+  // Pagination handlers
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // Reset to the first page
+  };
+
+  // Calculate the data to display for the current page
+  const paginatedOrders = orders.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   return (
     <Box sx={{ my: 2 }}>
@@ -111,7 +132,7 @@ const OrderStatus = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {orders.map((order) => (
+              {paginatedOrders.map((order) => (
                 <TableRow key={order._id}>
                   <TableCell>{order.orderNumber}</TableCell>
                   <TableCell>{order.state}</TableCell>
@@ -122,7 +143,9 @@ const OrderStatus = () => {
                           variant="contained"
                           size="small"
                           color="primary"
-                          onClick={() => handleUpdateState(order._id, "accepted")}
+                          onClick={() =>
+                            handleUpdateState(order._id, "accepted")
+                          }
                           sx={{ m: 0.5 }}
                         >
                           Accept Order
@@ -137,12 +160,14 @@ const OrderStatus = () => {
                           Reject Order
                         </Button>
                       </>
-                    ) :  (
+                    ) : (
                       <>
                         <Button
                           variant="contained"
                           size="small"
-                          onClick={() => handleUpdateState(order._id, "conduct")}
+                          onClick={() =>
+                            handleUpdateState(order._id, "conduct")
+                          }
                           disabled={order.state !== "accepted"}
                           sx={{ m: 0.5 }}
                         >
@@ -151,7 +176,9 @@ const OrderStatus = () => {
                         <Button
                           variant="contained"
                           size="small"
-                          onClick={() => handleUpdateState(order._id, "finalizing")}
+                          onClick={() =>
+                            handleUpdateState(order._id, "finalizing")
+                          }
                           disabled={order.state !== "conduct"}
                           sx={{ m: 0.5 }}
                         >
@@ -160,7 +187,9 @@ const OrderStatus = () => {
                         <Button
                           variant="contained"
                           size="small"
-                          onClick={() => handleUpdateState(order._id, "process")}
+                          onClick={() =>
+                            handleUpdateState(order._id, "process")
+                          }
                           disabled={order.state !== "finalizing"}
                           sx={{ m: 0.5 }}
                         >
@@ -169,7 +198,9 @@ const OrderStatus = () => {
                         <Button
                           variant="contained"
                           size="small"
-                          onClick={() => handleUpdateState(order._id, "finished")}
+                          onClick={() =>
+                            handleUpdateState(order._id, "finished")
+                          }
                           disabled={order.state !== "process"}
                           sx={{ m: 0.5 }}
                         >
@@ -178,7 +209,9 @@ const OrderStatus = () => {
                         <Button
                           variant="contained"
                           size="small"
-                          onClick={() => handleUpdateState(order._id, "shipped")}
+                          onClick={() =>
+                            handleUpdateState(order._id, "shipped")
+                          }
                           disabled={order.state !== "finished"}
                           sx={{ m: 0.5 }}
                         >
@@ -187,19 +220,32 @@ const OrderStatus = () => {
                         <Button
                           variant="contained"
                           size="small"
-                          onClick={() => handleUpdateState(order._id, "delivered")}
+                          onClick={() =>
+                            handleUpdateState(order._id, "delivered")
+                          }
                           disabled={order.state !== "shipped"}
                           sx={{ m: 0.5 }}
                         >
                           Deliver
                         </Button>
                       </>
-                    ) }
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+
+          {/* Pagination component */}
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={orders.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </TableContainer>
       )}
 
@@ -212,7 +258,8 @@ const OrderStatus = () => {
         <DialogTitle id="alert-dialog-title">{"Confirm Reject"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to reject the order {selectedOrder?.orderNumber}?
+            Are you sure you want to reject the order{" "}
+            {selectedOrder?.orderNumber}?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

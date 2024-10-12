@@ -75,7 +75,11 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isResettingPassword, setIsResettingPassword] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState({
+    password1: false,
+    password2: false,
+    password3: false,
+  });
   const [formValues, setFormValues] = useState({
     name: "",
     lastName: "",
@@ -193,8 +197,11 @@ const ProfilePage = () => {
     }
   };
 
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
+  const toggleShowPassword = (fieldName) => {
+    setShowPassword((prevState) => ({
+      ...prevState,
+      [fieldName]: !prevState[fieldName],
+    }));
   };
 
   if (loading) {
@@ -390,15 +397,21 @@ const ProfilePage = () => {
                     fullWidth
                     name="currentPassword"
                     label="Current Password"
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword?.password1 ? "text" : "password"}
                     id="currentPassword"
                     value={formValues.currentPassword}
                     onChange={handleInputChange}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton onClick={toggleShowPassword}>
-                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                          <IconButton
+                            onClick={() => toggleShowPassword("password1")}
+                          >
+                            {showPassword?.password1 ? (
+                              <Visibility />
+                            ) : (
+                              <VisibilityOff />
+                            )}
                           </IconButton>
                         </InputAdornment>
                       ),
@@ -411,15 +424,21 @@ const ProfilePage = () => {
                     fullWidth
                     name="newPassword"
                     label="New Password"
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword?.password2 ? "text" : "password"}
                     id="newPassword"
                     value={formValues.newPassword}
                     onChange={handleInputChange}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton onClick={toggleShowPassword}>
-                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                          <IconButton
+                            onClick={() => toggleShowPassword("password2")}
+                          >
+                            {showPassword?.password2 ? (
+                              <Visibility />
+                            ) : (
+                              <VisibilityOff />
+                            )}
                           </IconButton>
                         </InputAdornment>
                       ),
@@ -432,15 +451,21 @@ const ProfilePage = () => {
                     fullWidth
                     name="confirmNewPassword"
                     label="Confirm New Password"
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword?.password3 ? "text" : "password"}
                     id="confirmNewPassword"
                     value={formValues.confirmNewPassword}
                     onChange={handleInputChange}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton onClick={toggleShowPassword}>
-                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                          <IconButton
+                            onClick={() => toggleShowPassword("password3")}
+                          >
+                            {showPassword?.password3 ? (
+                              <Visibility />
+                            ) : (
+                              <VisibilityOff />
+                            )}
                           </IconButton>
                         </InputAdornment>
                       ),

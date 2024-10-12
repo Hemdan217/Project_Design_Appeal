@@ -212,6 +212,7 @@ function ResponsiveAppBar() {
                   onClick={() => {
                     localStorage.removeItem("userInfo");
                     setUserInfo(null);
+                    setIsLoggedIn(false);
                     navigate("/");
                   }}
                 >

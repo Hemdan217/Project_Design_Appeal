@@ -43,6 +43,7 @@ import PersonalMail from "../PersonalMail/PersonalMail.jsx";
 import { flexbox } from "@mui/system";
 import AdminReviewList from "../Adminreviewapprove/AdminReviewList.jsx";
 import FeedbackList from "../feedback/FeedbackList.jsx";
+import { useStateContext } from "../../store/ContextProvider.jsx";
 
 const drawerWidth = 250;
 
@@ -130,6 +131,7 @@ function AdminSidebar(props) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const { userInfo, setUserInfo, setIsLoggedIn } = useStateContext();
   const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
@@ -192,7 +194,7 @@ function AdminSidebar(props) {
             onClick={handleProfileMenuOpen}
             color="inherit"
           >
-            <Avatar alt="User" src="/static/images/avatar/2.jpg" />
+            <Avatar alt="User" src={userInfo?.pic} />
           </IconButton>
         </Tooltip>
         <Menu
@@ -210,12 +212,14 @@ function AdminSidebar(props) {
           open={Boolean(anchorElUser)}
           onClose={handleProfileMenuClose}
         >
-          <MenuItem onClick={handleProfileMenuClose}>
+          <MenuItem onClick={() => navigate("/profile")}>
             Profile Management
           </MenuItem>
           <MenuItem
             onClick={() => {
               localStorage.removeItem("userInfo");
+              setUserInfo(null);
+              setIsLoggedIn(false);
               navigate("/");
             }}
           >
@@ -233,7 +237,6 @@ function AdminSidebar(props) {
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{ keepMounted: true }}
-          
           sx={{ display: { xs: "block", sm: "none" } }}
         >
           <DrawerContent />
@@ -241,8 +244,11 @@ function AdminSidebar(props) {
         <Drawer
           variant="permanent"
           sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
           }}
           open
         >
@@ -268,7 +274,7 @@ function AdminSidebar(props) {
           <Route path="/materials/states" element={<MaterialStates />} />
           <Route path="/payment-history" element={<PaymentHistory />} />
           <Route path="/review" element={<AdminReviewList />} />
-          <Route path="/feedback" element={<FeedbackList/>} />
+          <Route path="/feedback" element={<FeedbackList />} />
           <Route
             path="/mailing/PromotionalMail"
             element={<PromotionalMailPage />}
@@ -291,30 +297,52 @@ function AdminSidebar(props) {
   function DrawerContent() {
     return (
       <div>
-        <Toolbar  />
+        <Toolbar />
         <Divider />
-        <List sx={{ padding:0, overflow: 'hidden',paddingRight: "150px"  }}> {/* Add overflowY auto to handle scroll */}
+        <List sx={{ padding: 0, overflow: "hidden", paddingRight: "150px" }}>
+          {" "}
+          {/* Add overflowY auto to handle scroll */}
           {nestedListItems.map((item) => (
             <React.Fragment key={item.text}>
               {item.children ? (
                 <>
-                  <ListItem sx={{ display: 'flex'}}disablePadding>
-                    <ListItemButton onClick={() => handleClick(item.text)}sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <ListItem sx={{ display: "flex" }} disablePadding>
+                    <ListItemButton
+                      onClick={() => handleClick(item.text)}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
                       <ListItemIcon>{item.icon}</ListItemIcon>
-                      <ListItemText  sx={{  flexGrow: 1 ,pr:1}} primary={item.text} />
-                      {openDrawer === item.text ? <ExpandLess  sx={{ ml: 6,display:'flex', }}/> : <ExpandMore sx={{ ml: 6 ,display:'flex',}}/> }
+                      <ListItemText
+                        sx={{ flexGrow: 1, pr: 1 }}
+                        primary={item.text}
+                      />
+                      {openDrawer === item.text ? (
+                        <ExpandLess sx={{ ml: 6, display: "flex" }} />
+                      ) : (
+                        <ExpandMore sx={{ ml: 6, display: "flex" }} />
+                      )}
                     </ListItemButton>
                   </ListItem>
-                  <Collapse in={openDrawer === item.text} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding >
+                  <Collapse
+                    in={openDrawer === item.text}
+                    timeout="auto"
+                    unmountOnExit
+                  >
+                    <List component="div" disablePadding>
                       {item.children.map((child) => (
                         <ListItemButton
                           key={child.text}
                           component={Link}
                           to={child.path}
-                          sx={{ pl: 8,alignItems: 'center',}} // Indent child items
+                          sx={{ pl: 8, alignItems: "center" }} // Indent child items
                         >
-                          <ListItemIcon sx={{ pr:12,  }}>{child.icon}</ListItemIcon>
+                          <ListItemIcon sx={{ pr: 12 }}>
+                            {child.icon}
+                          </ListItemIcon>
                           <ListItemText primary={child.text} />
                         </ListItemButton>
                       ))}
@@ -322,10 +350,10 @@ function AdminSidebar(props) {
                   </Collapse>
                 </>
               ) : (
-                <ListItem  key={item.text} disablePadding>
+                <ListItem key={item.text} disablePadding>
                   <ListItemButton component={Link} to={item.path}>
                     <ListItemIcon>{item.icon}</ListItemIcon>
-                    <ListItemText sx={{ pl:3  }}primary={item.text} />
+                    <ListItemText sx={{ pl: 3 }} primary={item.text} />
                   </ListItemButton>
                 </ListItem>
               )}
@@ -335,7 +363,7 @@ function AdminSidebar(props) {
       </div>
     );
   }
-}  
+}
 
 AdminSidebar.propTypes = {
   window: PropTypes.func,

@@ -3,6 +3,7 @@ import { Box, Typography, Button, Container, Grid } from "@mui/material";
 import { styled } from "@mui/system";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useStateContext } from "../../../store/ContextProvider";
 const HeroContainer = styled(Box)(({ theme }) => ({
   backgroundImage: `url('https://cdns.crestline.com/crestline/How-to-pick-the-best-tshirt-variety.jpg')`,
   backgroundSize: "cover",
@@ -52,7 +53,6 @@ const CtaButton = styled(Button)(({ theme }) => ({
   padding: theme.spacing(1.5, 4),
   fontSize: "1.2rem",
   fontWeight: "bold",
- 
 }));
 
 const FeatureBox = styled(Box)(({ theme }) => ({
@@ -65,15 +65,16 @@ const FeatureBox = styled(Box)(({ theme }) => ({
 
 export default function ProductHero() {
   const [imageFailed, setImageFailed] = useState(false);
-
+  const { isLoggedIn, setIsLoggedIn, setUserInfo } = useStateContext();
   useEffect(() => {
     const img = new Image();
-    img.src = "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80";
+    img.src =
+      "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80";
     img.onerror = () => setImageFailed(true);
   }, []);
 
   return (
-    <HeroContainer className={imageFailed ? 'fallback' : ''}>
+    <HeroContainer className={imageFailed ? "fallback" : ""}>
       <ContentContainer maxWidth="lg">
         <Grid container spacing={4} alignItems="center">
           <Grid item xs={12} md={7}>
@@ -82,7 +83,12 @@ export default function ProductHero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <Typography variant="h1" color="white" fontWeight="bold" gutterBottom>
+              <Typography
+                variant="h1"
+                color="white"
+                fontWeight="bold"
+                gutterBottom
+              >
                 Design Your <HighlightText>Dream</HighlightText> Tee
               </Typography>
               <Typography variant="h4" color="white" paragraph>
@@ -92,7 +98,7 @@ export default function ProductHero() {
                 variant="contained"
                 color="primary"
                 size="large"
-                 to='/myproject'
+                to={isLoggedIn ? "/myproject" : "/login"}
                 component={Link}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -111,7 +117,12 @@ export default function ProductHero() {
                 <Typography variant="h6" color="white" gutterBottom>
                   Why Choose Us:
                 </Typography>
-                {["Expert Designers", "Premium Materials", "Fast Turnaround", "100% Satisfaction Guaranteed"].map((feature, index) => (
+                {[
+                  "Expert Designers",
+                  "Premium Materials",
+                  "Fast Turnaround",
+                  "100% Satisfaction Guaranteed",
+                ].map((feature, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, x: -20 }}
