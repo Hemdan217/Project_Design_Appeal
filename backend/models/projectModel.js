@@ -18,7 +18,12 @@ const ProjectSchema = new mongoose.Schema({
     required: true,
   },
   totalPrice: { type: Number, required: true },
-  quantity: { type: Number, default: 1 }, // Default to 1
+  quantity: { type: Number, default: 1 },
+  vote: { type: Number, default: 1 }, // Default to 1
+  endDate: { type: Date, default: Date.now() },
+  startDate: { type: Date, default: Date.now() },
+  status: { type: String, enum: ["active", "inactive"], default: "active" },
+  visiable: { type: Boolean, default: true },
 });
 
 const Project = mongoose.model("Project", ProjectSchema);
