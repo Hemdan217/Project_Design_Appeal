@@ -15,6 +15,7 @@ import Loading from "../Loading/Loading";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import { useNavigate } from "react-router-dom";
 import { useStateContext } from "../../store/ContextProvider";
+import ResponsiveAppBar from "../Homepage/HomeAppbar";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -76,111 +77,114 @@ export default function Login() {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        height: "100vh",
-        justifyContent: "center",
-        alignItems: "center",
-        bgcolor: "#f0f2f5",
-      }}
-    >
-      <Container
-        component="main"
-        maxWidth="md"
-        sx={{ bgcolor: "white", borderRadius: 2, boxShadow: 3, p: 4 }}
+    <div>
+      <ResponsiveAppBar />
+      <Box
+        sx={{
+          display: "flex",
+          height: "100vh",
+          justifyContent: "center",
+          alignItems: "center",
+          bgcolor: "#f0f2f5",
+        }}
       >
-        <Grid container spacing={2}>
-          <Grid
-            item
-            xs={12}
-            md={6}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
-              alt="Sample"
-              style={{ maxWidth: "100%", height: "auto" }}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            md={6}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-            }}
-          >
-            {error && (
-              <Box sx={{ mb: 2, width: "100%" }}>
-                <ErrorMessage variant="error">{error}</ErrorMessage>
-              </Box>
-            )}
-            {loading && <Loading />}
-            <Box component="form" sx={{ mt: 1 }} onSubmit={submitHandler}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoFocus
-                error={!!error && !validateEmail(email)}
-                helperText={error && !validateEmail(email) ? error : ""}
+        <Container
+          component="main"
+          maxWidth="md"
+          sx={{ bgcolor: "white", borderRadius: 2, boxShadow: 3, p: 4 }}
+        >
+          <Grid container spacing={2}>
+            <Grid
+              item
+              xs={12}
+              md={6}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <img
+                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+                alt="Sample"
+                style={{ maxWidth: "100%", height: "auto" }}
               />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="current-password"
-                error={!!error && password.length < 6}
-                helperText={error && password.length < 6 ? error : ""}
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                sx={{ mt: 3, mb: 2 }}
-                disabled={loading}
-              >
-                {loading ? "Loading..." : "Login"}
-              </Button>
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-                <Typography variant="body2">
-                  Don't have an account?{" "}
-                  <Link href="/register" variant="body2">
-                    Register
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              md={6}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
+              {error && (
+                <Box sx={{ mb: 2, width: "100%" }}>
+                  <ErrorMessage variant="error">{error}</ErrorMessage>
+                </Box>
+              )}
+              {loading && <Loading />}
+              <Box component="form" sx={{ mt: 1 }} onSubmit={submitHandler}>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoFocus
+                  error={!!error && !validateEmail(email)}
+                  helperText={error && !validateEmail(email) ? error : ""}
+                />
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="current-password"
+                  error={!!error && password.length < 6}
+                  helperText={error && password.length < 6 ? error : ""}
+                />
+                <FormControlLabel
+                  control={<Checkbox value="remember" color="primary" />}
+                  label="Remember me"
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  sx={{ mt: 3, mb: 2 }}
+                  disabled={loading}
+                >
+                  {loading ? "Loading..." : "Login"}
+                </Button>
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <Link href="#" variant="body2">
+                    Forgot password?
                   </Link>
-                </Typography>
+                  <Typography variant="body2">
+                    Don't have an account?{" "}
+                    <Link href="/register" variant="body2">
+                      Register
+                    </Link>
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
+            </Grid>
           </Grid>
-        </Grid>
-      </Container>
-    </Box>
+        </Container>
+      </Box>
+    </div>
   );
 }

@@ -10,7 +10,7 @@ import ItemsBar from "../components/ItemsBar/ItemsBar";
 import Workstage from "../components/Workstage/Workstage";
 import "./EditSpace.css";
 import { red } from "@mui/material/colors";
-import { grey } from '@mui/material/colors';
+import { grey } from "@mui/material/colors";
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
   padding: theme.spacing(0),
@@ -25,14 +25,14 @@ const EditSpace = () => {
   const [imageDataURL, setImageDataURL] = useState(null);
   const [cartItem, setCartItem] = useState(null);
   const [selectedApparel, setSelectedApparel] = useState({
-    type: "Tshirt", 
+    type: "Tshirt",
     size: "",
   });
   const [color, setColor] = useState("#ffffff");
   const [text, setText] = useState("");
   const [image, setImage] = useState(null);
   const [materialPrice, setMaterialPrice] = useState(0);
-  const [materialName, setMaterialName] = useState(""); 
+  const [materialName, setMaterialName] = useState("");
 
   const navbarRef = useRef(null);
 
@@ -63,7 +63,7 @@ const EditSpace = () => {
       text,
       image,
       materialPrice,
-      materialName, 
+      materialName,
     };
     setCartItem(newItem);
   };
@@ -78,14 +78,14 @@ const EditSpace = () => {
                 <DesignNavBar />
               </Item>
             </Grid>
-            <Grid item xs={isSidebarOpen ? 4 : 1} >
+            <Grid item xs={isSidebarOpen ? 4 : 1}>
               <Item>
                 <ItemsBar
                   onToggleSidebar={toggleSidebar}
                   onColorChange={setColor}
                   onTextChange={setText}
                   onImageUpload={setImage}
-                  onMaterialSelect={handleMaterialSelect} 
+                  onMaterialSelect={handleMaterialSelect}
                 />
               </Item>
             </Grid>
@@ -93,11 +93,17 @@ const EditSpace = () => {
               <Item>
                 <Workstage
                   selectedApparel={selectedApparel}
+                  setSelectedApparel={setSelectedApparel}
                   color={color}
+                  setColor={setColor}
                   text={text}
+                  setText={setText}
                   image={image}
+                  setImage={setImage}
                   materialPrice={materialPrice}
-                  materialName={materialName} 
+                  setMaterialPrice={setMaterialPrice}
+                  materialName={materialName}
+                  setMaterialName={setMaterialName}
                   onFinalImageReady={handleFinalImageReady}
                 />
               </Item>
@@ -116,8 +122,7 @@ const EditSpace = () => {
           .sidebar {
             height: calc(100vh - ${navbarHeight}px);
             overflow-y: auto;
-          background-color: ${grey[300]};  
-             
+            background-color: ${grey[300]};
           }
         `}
       />

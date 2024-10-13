@@ -10,6 +10,7 @@ import {
   Stack,
 } from "@mui/material";
 import { styled } from "@mui/system";
+import ResponsiveAppBar from "../Homepage/HomeAppbar";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -71,48 +72,52 @@ const ApprovedReviewList = () => {
   };
 
   return (
-    <Box sx={{ padding: 4, maxWidth: "800px", margin: "0 auto" }}>
-      <Typography
-        variant="h4"
-        component="h1"
-        gutterBottom
-        color="primary"
-        align="center"
-      >
-        Reviews
-      </Typography>
-      <Divider sx={{ marginBottom: 3 }} />
+    <div>
+      <ResponsiveAppBar />
 
-      {currentReviews.map((review) => (
-        <StyledPaper key={review._id}>
-          <UserNameTypography variant="h6">
-            {review.userName}
-          </UserNameTypography>
-          <ReviewTypography variant="body1">{review.review}</ReviewTypography>
-          <RatingTypography variant="body2">
-            Rating:{" "}
-            <Rating
-              value={review.rating}
-              readOnly
-              precision={0.5}
-              size="small"
-              sx={{ ml: 1 }}
-            />
-          </RatingTypography>
-        </StyledPaper>
-      ))}
-
-      <Stack spacing={2} alignItems="center" sx={{ marginTop: 4 }}>
-        <Pagination
-          count={Math.ceil(reviews.length / reviewsPerPage)}
-          page={currentPage}
-          onChange={handlePageChange}
+      <Box sx={{ padding: 4, maxWidth: "800px", margin: "0 auto" }}>
+        <Typography
+          variant="h4"
+          component="h1"
+          gutterBottom
           color="primary"
-          variant="outlined"
-          shape="rounded"
-        />
-      </Stack>
-    </Box>
+          align="center"
+        >
+          Reviews
+        </Typography>
+        <Divider sx={{ marginBottom: 3 }} />
+
+        {currentReviews.map((review) => (
+          <StyledPaper key={review._id}>
+            <UserNameTypography variant="h6">
+              {review.userName}
+            </UserNameTypography>
+            <ReviewTypography variant="body1">{review.review}</ReviewTypography>
+            <RatingTypography variant="body2">
+              Rating:{" "}
+              <Rating
+                value={review.rating}
+                readOnly
+                precision={0.5}
+                size="small"
+                sx={{ ml: 1 }}
+              />
+            </RatingTypography>
+          </StyledPaper>
+        ))}
+
+        <Stack spacing={2} alignItems="center" sx={{ marginTop: 4 }}>
+          <Pagination
+            count={Math.ceil(reviews.length / reviewsPerPage)}
+            page={currentPage}
+            onChange={handlePageChange}
+            color="primary"
+            variant="outlined"
+            shape="rounded"
+          />
+        </Stack>
+      </Box>
+    </div>
   );
 };
 

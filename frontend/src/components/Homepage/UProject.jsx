@@ -121,7 +121,7 @@ export default function ProductCategories() {
               style={{
                 width: "24%",
               }}
-              onClick={() => handleClick(image.path)} // Handle click
+              onClick={() => handleClick("/myproject/" + image._id)} // Handle click
             >
               <Box
                 sx={{

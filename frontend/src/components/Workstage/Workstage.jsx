@@ -3,7 +3,7 @@ import { Stage, Layer, Text, Image, Transformer } from "react-konva";
 import useImage from "use-image";
 import Konva from "konva";
 import Modal from "react-modal";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Typography from "../Homepage/Typography";
 import { Button } from "@mui/material";
@@ -19,11 +19,17 @@ const Workstage = ({
   textPrice = 50,
   onFinalImageReady,
   materialName = "",
+  setSelectedApparel,
+  setColor,
+  setText,
+  setImage,
+  setMaterialPrice,
+  setMaterialName,
 }) => {
   const navigate = useNavigate();
   const stageWidth = 850;
   const stageHeight = 550;
-
+  const { id } = useParams();
   const [stageDimensions, setStageDimensions] = useState({
     width: stageWidth,
     height: stageHeight,
@@ -249,6 +255,38 @@ const Workstage = ({
       console.error("Error adding item to cart:", error);
     }
   };
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        const response = await axios.get(`/api/cart/new_project/${id}`);
+        const {
+          imageDataURL,
+          color,
+          materialName,
+          materialPrice,
+          colorPrice,
+          imagePrice,
+          textPrice,
+          text,
+          selectedApparel,
+          totalPrice,
+          quantity,
+        } = response.data;
+        setImageDataURL(imageDataURL);
+        setColor(color);
+        setMaterialName(materialName);
+        setMaterialPrice(materialPrice);
+
+        setText(text);
+        setSelectedApparel(selectedApparel);
+      } catch (error) {
+        console.error("Error fetching cart items:", error);
+      }
+    };
+    if (id) {
+      fetchProject();
+    }
+  }, [id]);
   const handleSaveDesign = async () => {
     if (!materialName) {
       alert("Please select material first");

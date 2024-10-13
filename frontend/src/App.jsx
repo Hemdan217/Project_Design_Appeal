@@ -48,6 +48,7 @@ function App() {
                 <Route path="/" element={<SimpleContainer />} />
 
                 <Route path="/myproject" element={<EditSpace />} />
+                <Route path="/myproject/:id" element={<EditSpace />} />
                 <Route path="/profile" element={<Profile />} />
               </>
             )}

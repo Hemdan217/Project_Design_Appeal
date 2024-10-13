@@ -21,8 +21,15 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import { Add, Remove, Delete, ShoppingCart } from "@mui/icons-material";
+import {
+  Add,
+  Remove,
+  Delete,
+  ShoppingCart,
+  ThumbUp,
+} from "@mui/icons-material";
 import generateHash from "./hashGenerator";
+import ResponsiveAppBar from "../Homepage/HomeAppbar";
 
 const AddToCart = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -49,10 +56,6 @@ const AddToCart = () => {
         );
       } catch (error) {
         console.error("Error fetching cart items:", error);
-        setSnackbarMessage(
-          "Error fetching cart items. Please try again later."
-        );
-        setSnackbarOpen(true);
       } finally {
         setLoading(false);
       }
@@ -81,8 +84,6 @@ const AddToCart = () => {
       }
     } catch (error) {
       console.error("Error removing item:", error);
-      setSnackbarMessage("Error removing item. Please try again.");
-      setSnackbarOpen(true);
     }
   };
 
@@ -121,8 +122,6 @@ const AddToCart = () => {
       }
     } catch (error) {
       console.error("Error updating quantity:", error);
-      setSnackbarMessage("Error updating quantity. Please try again.");
-      setSnackbarOpen(true);
     }
   };
 
@@ -132,6 +131,15 @@ const AddToCart = () => {
         item._id === id ? { ...item, selected: !item.selected } : item
       )
     );
+  };
+
+  const handleVote = async (imageURL) => {
+    try {
+      await axios.post("/api/votes/v", { imageURL });
+      alert("Vote submitted successfully!");
+    } catch (error) {
+      console.error("Error voting for design:", error);
+    }
   };
 
   const handleCheckout = async () => {
@@ -203,7 +211,6 @@ const AddToCart = () => {
         formData.amount,
         formData.currency
       );
-
       await Promise.all(
         selectedItems.map((item) => axios.delete(`/api/cart/${item._id}`))
       );
@@ -215,8 +222,6 @@ const AddToCart = () => {
       }, 1000);
     } catch (error) {
       console.error("Error processing order:", error);
-      setSnackbarMessage("Error processing order. Please try again.");
-      setSnackbarOpen(true);
       setIsProcessing(false);
     }
   };
@@ -243,174 +248,198 @@ const AddToCart = () => {
   }
 
   return (
-    <Container maxWidth="md">
-      <Box sx={{ py: 4 }}>
-        <Typography
-          variant="h4"
-          gutterBottom
-          sx={{ display: "flex", alignItems: "center", mb: 3 }}
-        >
-          <ShoppingCart sx={{ mr: 2 }} />
-          Your Shopping Cart
-        </Typography>
-        {cartItems.length === 0 ? (
-          <Paper elevation={3} sx={{ p: 3, textAlign: "center" }}>
-            <Typography variant="body1">Your cart is empty.</Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ mt: 2 }}
-              onClick={() => navigate("/")}
-            >
-              Continue Shopping
-            </Button>
-          </Paper>
-        ) : (
-          <Box>
-            <List>
-              {cartItems.map((item) => {
-                const materialPrice =
-                  item.materialPrice > 0 ? item.materialPrice : 50;
-
-                return (
-                  <Card key={item._id} sx={{ mb: 2, boxShadow: 3 }}>
-                    <CardContent>
-                      <Grid container spacing={2} alignItems="center">
-                        <Grid item xs={12} sm={2}>
-                          <Checkbox
-                            checked={item.selected}
-                            onChange={() => handleSelect(item._id)}
-                            color="primary"
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={3}>
-                          <CardMedia
-                            component="img"
-                            image={item.imageDataURL}
-                            alt="Apparel Design"
-                            sx={{
-                              maxWidth: "100%",
-                              height: "auto",
-                              objectFit: "contain",
-                              borderRadius: 1,
-                            }}
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={5}>
-                          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                            {item.selectedApparel.type}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            Material: {item.materialName}
-                          </Typography>
-                          <Typography variant="body2">
-                            Price: LKR {materialPrice}
-                          </Typography>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              mt: 1,
-                            }}
-                          >
-                            <IconButton
-                              onClick={() =>
-                                handleQuantityChange(
-                                  item._id,
-                                  item.quantity - 1
-                                )
-                              }
-                              disabled={item.quantity <= 1}
-                            >
-                              <Remove />
-                            </IconButton>
-                            <TextField
-                              value={item.quantity}
-                              type="number"
-                              padding="8px"
-                              InputProps={{
-                                inputProps: {
-                                  min: 1,
-                                  max: item.availableQuantity,
-                                },
-                              }}
-                              onChange={(e) =>
-                                handleQuantityChange(
-                                  item._id,
-                                  Number(e.target.value)
-                                )
-                              }
-                              sx={{ width: 50, mx: 1 }}
-                              variant="outlined"
-                              size="small"
-                            />
-                            <IconButton
-                              onClick={() =>
-                                handleQuantityChange(
-                                  item._id,
-                                  item.quantity + 1
-                                )
-                              }
-                              disabled={item.quantity >= item.availableQuantity}
-                            >
-                              <Add />
-                            </IconButton>
-                          </Box>
-                        </Grid>
-                        <Grid item xs={12} sm={2}>
-                          <Typography variant="body1" color="text.primary">
-                            Total: LKR {item.totalPrice}
-                          </Typography>
-                          <Tooltip title="Remove">
-                            <IconButton onClick={() => handleRemove(item._id)}>
-                              <Delete color="error" />
-                            </IconButton>
-                          </Tooltip>
-                        </Grid>
-                      </Grid>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </List>
-            <Divider />
-            <Box sx={{ mt: 3, textAlign: "right" }}>
+    <div>
+      <ResponsiveAppBar />
+      <Container maxWidth="md">
+        <Box sx={{ py: 4 }}>
+          <Typography
+            variant="h4"
+            gutterBottom
+            sx={{ display: "flex", alignItems: "center", mb: 3 }}
+          >
+            <ShoppingCart sx={{ mr: 2 }} />
+            Your Shopping Cart
+          </Typography>
+          {cartItems.length === 0 ? (
+            <Paper elevation={3} sx={{ p: 3, textAlign: "center" }}>
+              <Typography variant="body1">Your cart is empty.</Typography>
               <Button
                 variant="contained"
                 color="primary"
-                onClick={handleCheckout}
-                disabled={isProcessing}
+                sx={{ mt: 2 }}
+                onClick={() => navigate("/")}
               >
-                {isProcessing ? <CircularProgress size={24} /> : "Checkout"}
+                Continue Shopping
               </Button>
+            </Paper>
+          ) : (
+            <Box>
+              <List>
+                {cartItems.map((item) => {
+                  const materialPrice =
+                    item.materialPrice > 0 ? item.materialPrice : 50;
+
+                  return (
+                    <Card key={item._id} sx={{ mb: 2, boxShadow: 3 }}>
+                      <CardContent>
+                        <Grid container spacing={2} alignItems="center">
+                          <Grid item xs={12} sm={2}>
+                            <Checkbox
+                              checked={item.selected}
+                              onChange={() => handleSelect(item._id)}
+                              color="primary"
+                            />
+                          </Grid>
+                          <Grid item xs={12} sm={3}>
+                            <CardMedia
+                              component="img"
+                              image={item.imageDataURL}
+                              alt="Apparel Design"
+                              sx={{
+                                maxWidth: "100%",
+                                height: "auto",
+                                objectFit: "contain",
+                                borderRadius: 1,
+                              }}
+                            />
+                          </Grid>
+                          <Grid item xs={12} sm={5}>
+                            <Typography
+                              variant="h6"
+                              sx={{ fontWeight: "bold" }}
+                            >
+                              {item.selectedApparel.type}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              Material: {item.materialName}
+                            </Typography>
+                            {item.text && (
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                Text: {item.text}
+                              </Typography>
+                            )}
+                            <Box sx={{ mt: 1 }}>
+                              <Grid container spacing={1}>
+                                <Grid item xs={6}>
+                                  <Typography variant="body2">
+                                    Material: ${materialPrice.toFixed(2)}
+                                  </Typography>
+                                  <Typography variant="body2">
+                                    Color: ${item.colorPrice.toFixed(2)}
+                                  </Typography>
+                                </Grid>
+                                <Grid item xs={6}>
+                                  {item.imageDataURL && (
+                                    <Typography variant="body2">
+                                      Image: ${item.imagePrice.toFixed(2)}
+                                    </Typography>
+                                  )}
+                                </Grid>
+                              </Grid>
+                              <Divider sx={{ my: 1 }} />
+                              <Typography variant="h6">
+                                Total Price: ${item.totalPrice.toFixed(2)}
+                              </Typography>
+                            </Box>
+                          </Grid>
+                          <Grid
+                            item
+                            xs={12}
+                            sm={2}
+                            container
+                            spacing={1}
+                            direction="column"
+                            alignItems="flex-end"
+                          >
+                            <Grid item>
+                              <TextField
+                                type="number"
+                                value={item.quantity}
+                                onChange={(e) =>
+                                  handleQuantityChange(
+                                    item._id,
+                                    parseInt(e.target.value)
+                                  )
+                                }
+                                inputProps={{ min: 1 }}
+                                size="small"
+                                sx={{ width: "100px" }}
+                              />
+                            </Grid>
+                            <Grid item>
+                              <Tooltip title="Remove item">
+                                <IconButton
+                                  color="error"
+                                  onClick={() => handleRemove(item._id)}
+                                >
+                                  <Delete />
+                                </IconButton>
+                              </Tooltip>
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </List>
+              <Box
+                sx={{
+                  mt: 4,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => navigate("/")}
+                >
+                  Continue Shopping
+                </Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={handleCheckout}
+                  disabled={isProcessing}
+                >
+                  {isProcessing ? <CircularProgress size={24} /> : "Checkout"}
+                </Button>
+              </Box>
             </Box>
-          </Box>
-        )}
-        <form
-          action="https://sandbox.payhere.lk/pay/checkout"
-          method="POST"
-          id="payment-form"
-          style={{ display: "none" }}
-        >
-          {Object.keys(formData).map((key) => (
-            <input key={key} type="hidden" name={key} value={formData[key]} />
-          ))}
-        </form>
-      </Box>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity="error"
-          sx={{ width: "100%" }}
-        >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
-    </Container>
+          )}
+          {formData && (
+            <form
+              id="payment-form"
+              action="https://sandbox.payhere.lk/pay/checkout"
+              method="POST"
+              style={{ display: "none" }}
+            >
+              {Object.entries(formData).map(([key, value]) => (
+                <input key={key} type="hidden" name={key} value={value} />
+              ))}
+            </form>
+          )}
+          <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={6000}
+            onClose={handleSnackbarClose}
+          >
+            <Alert
+              onClose={handleSnackbarClose}
+              severity="warning"
+              sx={{ width: "100%" }}
+            >
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
+        </Box>
+      </Container>
+    </div>
   );
 };
 
