@@ -316,8 +316,11 @@ const Workstage = ({
       };
 
       console.log("Adding to cart:", newItem);
-
-      await axios.post("/api/cart/new_project", newItem);
+      if (id) {
+        await axios.patch(`/api/cart/new_project/${id}`, newItem);
+      } else {
+        await axios.post("/api/cart/new_project", newItem);
+      }
 
       setIsModalOpen(false);
       // navigate("/cart");

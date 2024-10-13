@@ -68,6 +68,18 @@ router.get("/cart/new_project/:id", async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
+router.patch("/cart/new_project/:id", async (req, res) => {
+  try {
+    const project = await Project.findOneAndUpdate(
+      { _id: req.params.id },
+      req.body,
+      { new: true }
+    );
+    res.status(201).json(project);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
 router.get("/cart/new_project", async (req, res) => {
   try {
     const { userId } = req.query;

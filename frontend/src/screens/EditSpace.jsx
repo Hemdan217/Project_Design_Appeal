@@ -11,6 +11,8 @@ import Workstage from "../components/Workstage/Workstage";
 import "./EditSpace.css";
 import { red } from "@mui/material/colors";
 import { grey } from "@mui/material/colors";
+import { Button } from "@mui/material";
+
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
   padding: theme.spacing(0),
@@ -34,6 +36,10 @@ const EditSpace = () => {
   const [materialPrice, setMaterialPrice] = useState(0);
   const [materialName, setMaterialName] = useState("");
 
+  // Undo/Redo history management
+  const [undoStack, setUndoStack] = useState([]);
+  const [redoStack, setRedoStack] = useState([]);
+
   const navbarRef = useRef(null);
 
   const toggleSidebar = (isOpen) => {
@@ -47,10 +53,12 @@ const EditSpace = () => {
   }, [navbarRef]);
 
   const handleApparelSelect = (apparel) => {
+    pushToUndoStack();
     setSelectedApparel(apparel);
   };
 
   const handleMaterialSelect = (material) => {
+    pushToUndoStack();
     setMaterialPrice(material.price);
     setMaterialName(material.name);
   };
@@ -68,6 +76,56 @@ const EditSpace = () => {
     setCartItem(newItem);
   };
 
+  // Push current state to the undo stack
+  const pushToUndoStack = () => {
+    const currentState = {
+      selectedApparel,
+      color,
+      text,
+      image,
+      materialPrice,
+      materialName,
+    };
+    setUndoStack((prev) => [...prev, currentState]);
+    setRedoStack([]); // Clear redo stack on new action
+  };
+
+  // Undo action
+  const handleUndo = () => {
+    if (undoStack.length > 0) {
+      const previousState = undoStack[undoStack.length - 1];
+      setRedoStack((prev) => [
+        ...prev,
+        { selectedApparel, color, text, image, materialPrice, materialName },
+      ]);
+      setSelectedApparel(previousState.selectedApparel);
+      setColor(previousState.color);
+      setText(previousState.text);
+      setImage(previousState.image);
+      setMaterialPrice(previousState.materialPrice);
+      setMaterialName(previousState.materialName);
+      setUndoStack((prev) => prev.slice(0, -1));
+    }
+  };
+
+  // Redo action
+  const handleRedo = () => {
+    if (redoStack.length > 0) {
+      const nextState = redoStack[redoStack.length - 1];
+      setUndoStack((prev) => [
+        ...prev,
+        { selectedApparel, color, text, image, materialPrice, materialName },
+      ]);
+      setSelectedApparel(nextState.selectedApparel);
+      setColor(nextState.color);
+      setText(nextState.text);
+      setImage(nextState.image);
+      setMaterialPrice(nextState.materialPrice);
+      setMaterialName(nextState.materialName);
+      setRedoStack((prev) => prev.slice(0, -1));
+    }
+  };
+
   return (
     <>
       <div className="editspace">
@@ -76,15 +134,44 @@ const EditSpace = () => {
             <Grid item xs={12} ref={navbarRef}>
               <Item>
                 <DesignNavBar />
+                <div className="history-controls">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    sx={{ mt: 2 }}
+                    onClick={handleUndo}
+                    disabled={undoStack.length === 0}
+                  >
+                    Undo
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    sx={{ mt: 2 }}
+                    onClick={handleRedo}
+                    disabled={redoStack.length === 0}
+                  >
+                    Redo
+                  </Button>
+                </div>
               </Item>
             </Grid>
             <Grid item xs={isSidebarOpen ? 4 : 1}>
               <Item>
                 <ItemsBar
                   onToggleSidebar={toggleSidebar}
-                  onColorChange={setColor}
-                  onTextChange={setText}
-                  onImageUpload={setImage}
+                  onColorChange={(newColor) => {
+                    pushToUndoStack();
+                    setColor(newColor);
+                  }}
+                  onTextChange={(newText) => {
+                    pushToUndoStack();
+                    setText(newText);
+                  }}
+                  onImageUpload={(newImage) => {
+                    pushToUndoStack();
+                    setImage(newImage);
+                  }}
                   onMaterialSelect={handleMaterialSelect}
                 />
               </Item>
