@@ -15,6 +15,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { ThumbUp } from "@mui/icons-material";
 import { useParams } from "react-router-dom";
+import ResponsiveAppBar from "../Homepage/HomeAppbar";
 
 const VotingPage = () => {
   const [votes, setVotes] = useState([]);
@@ -103,80 +104,87 @@ const VotingPage = () => {
   }
 
   return (
-    <Container maxWidth="md">
-      <Box sx={{ py: 4 }}>
-        <Typography variant="h4" gutterBottom>
-          Voting Results
-        </Typography>
-        {!id && votes.length === 0 ? (
-          <Typography variant="body1">No votes yet.</Typography>
-        ) : (
-          !id && (
-            <Box>
-              {votes.map((vote) => (
-                <Card key={vote._id} sx={{ display: "flex", mb: 2, p: 2 }}>
-                  <CardMedia
-                    component="img"
-                    sx={{ width: 100, height: 100, mr: 2 }}
-                    image={vote.imageURL}
-                    alt="Apparel Design"
-                    onClick={() => handleClickImage(vote.imageURL)}
-                  />
-                  <CardContent>
-                    <Typography variant="h6">
-                      Votes: {vote.votes}
-                      <IconButton
-                        color="primary"
-                        onClick={() => handleVote(vote.imageURL)}
-                        sx={{ ml: 1 }}
-                      >
-                        <ThumbUp />
-                      </IconButton>
-                    </Typography>
-                  </CardContent>
-                </Card>
-              ))}
-            </Box>
-          )
-        )}
-      </Box>
-      {id && (
+    <div>
+      <ResponsiveAppBar />
+      <Container maxWidth="md">
         <Box sx={{ py: 4 }}>
-          <Card sx={{ display: "flex", mb: 2, p: 2 }}>
-            <CardMedia
-              component="img"
-              sx={{ width: 100, height: 100, mr: 2 }}
-              image={project.imageDataURL}
-              alt="Apparel Design"
-              onClick={() => handleClickImage(project.imageDataURL)}
-            />
-            <CardContent>
-              <Typography variant="h6">
-                Votes: {project.vote}
-                <IconButton
-                  color="primary"
-                  onClick={() => handleVoteProject(project.imageDataURL)}
-                  sx={{ ml: 1 }}
-                >
-                  <ThumbUp />
-                </IconButton>
-              </Typography>
-            </CardContent>
-          </Card>
+          <Typography variant="h4" gutterBottom>
+            Voting Results
+          </Typography>
+          {!id && votes.length === 0 ? (
+            <Typography variant="body1">No votes yet.</Typography>
+          ) : (
+            !id && (
+              <Box>
+                {votes.map((vote) => (
+                  <Card key={vote._id} sx={{ display: "flex", mb: 2, p: 2 }}>
+                    <CardMedia
+                      component="img"
+                      sx={{ width: 100, height: 100, mr: 2 }}
+                      image={vote.imageURL}
+                      alt="Apparel Design"
+                      onClick={() => handleClickImage(vote.imageURL)}
+                    />
+                    <CardContent>
+                      <Typography variant="h6">
+                        Votes: {vote.votes}
+                        <IconButton
+                          color="primary"
+                          onClick={() => handleVote(vote.imageURL)}
+                          sx={{ ml: 1 }}
+                        >
+                          <ThumbUp />
+                        </IconButton>
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Box>
+            )
+          )}
         </Box>
-      )}
+        {id && (
+          <Box sx={{ py: 4 }}>
+            <Card sx={{ display: "flex", mb: 2, p: 2 }}>
+              <CardMedia
+                component="img"
+                sx={{ width: 100, height: 100, mr: 2 }}
+                image={project.imageDataURL}
+                alt="Apparel Design"
+                onClick={() => handleClickImage(project.imageDataURL)}
+              />
+              <CardContent>
+                <Typography variant="h6">
+                  Votes: {project?.visiable ? project.vote : "not visible"}
+                  {project.status == "active" ? (
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleVoteProject(project.imageDataURL)}
+                      sx={{ ml: 1 }}
+                    >
+                      <ThumbUp />
+                    </IconButton>
+                  ) : (
+                    "Current The Voting for this project is close"
+                  )}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Box>
+        )}
 
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Design</DialogTitle>
-        <DialogContent>
-          <img
-            src={selectedImage}
-            alt="Design"
-            style={{ width: "100%", height: "auto" }}
-          />
-        </DialogContent>
-      </Dialog>
-    </Container>
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>Design</DialogTitle>
+          <DialogContent>
+            <img
+              src={selectedImage}
+              alt="Design"
+              style={{ width: "100%", height: "auto" }}
+            />
+          </DialogContent>
+        </Dialog>
+      </Container>
+    </div>
   );
 };
 
