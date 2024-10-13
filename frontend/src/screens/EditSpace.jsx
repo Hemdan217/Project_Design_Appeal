@@ -138,9 +138,10 @@ const EditSpace = () => {
                   <Button
                     variant="contained"
                     color="primary"
-                    sx={{ mt: 2 }}
+                    sx={{ mt: 2, me: 1 }}
                     onClick={handleUndo}
                     disabled={undoStack.length === 0}
+                    style={{ marginRight: "10px" }}
                   >
                     Undo
                   </Button>

@@ -56,6 +56,7 @@ function App() {
 
             <Route path="/feedback" element={<FeedbackForm />} />
             <Route path="/voting" element={<VotingPage />} />
+            <Route path="/voting/:id" element={<VotingPage />} />
             <Route path="/ratings" element={<Rate />} />
             <Route path="/addrate" element={<RateForm />} />
             <Route path="/cart" element={<AddToCart />} />

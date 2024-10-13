@@ -6,7 +6,13 @@ import Modal from "react-modal";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Typography from "../Homepage/Typography";
-import { Button } from "@mui/material";
+import {
+  Button,
+  Checkbox,
+  FormControlLabel,
+  MenuItem,
+  TextField,
+} from "@mui/material";
 
 const Workstage = ({
   selectedApparel,
@@ -46,7 +52,34 @@ const Workstage = ({
   const [apparelImageSrc, setApparelImageSrc] = useState(null);
   const [imageDataURL, setImageDataURL] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isVoting, setIsVoting] = useState(false);
+  const [vote, setVote] = useState(1); // Default to 1
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  const [status, setStatus] = useState("active");
+  const [visible, setVisible] = useState(true);
 
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // New modal state
+
+  // Handle modal form submission
+  const handleSaveVoteSettings = () => {
+    const updatedData = { vote, startDate, endDate, status, visible };
+    console.log("Saving vote settings:", updatedData);
+
+    // Example: Submit the data to the backend
+    if (id) {
+      axios
+        .patch(`/api/cart/new_project/${id}`, updatedData)
+        .then((response) => {
+          console.log("Vote settings updated:", response.data);
+        })
+        .catch((error) =>
+          console.error("Error updating vote settings:", error)
+        );
+    }
+
+    setIsEditModalOpen(false);
+  };
   useEffect(() => {
     if (selectedApparel) {
       import(`./${selectedApparel.type}.png`)
@@ -331,6 +364,38 @@ const Workstage = ({
 
   return (
     <div ref={containerRef} style={{ width: "100%", height: "100%" }}>
+      <div>
+        <Typography>Total Price: ${totalPrice}</Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ mt: 2 }}
+          onClick={handleSaveImage}
+        >
+          Save Design{" "}
+        </Button>
+      </div>
+      {id && (
+        <>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2 }}
+            onClick={() => setIsEditModalOpen(true)}
+          >
+            Edit Voting Settings
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2 }}
+            style={{ marginLeft: "10px" }}
+            onClick={() => navigate(`/voting/${id}`)}
+          >
+            Voting Link
+          </Button>
+        </>
+      )}
       <Stage
         width={stageDimensions.width}
         height={stageDimensions.height}
@@ -345,17 +410,7 @@ const Workstage = ({
           <Transformer ref={transformerRef} />
         </Layer>
       </Stage>
-      <div>
-        <Typography>Total Price: ${totalPrice}</Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{ mt: 2 }}
-          onClick={handleSaveImage}
-        >
-          Save Design{" "}
-        </Button>
-      </div>
+
       <Modal
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}
@@ -414,6 +469,94 @@ const Workstage = ({
               Add to Cart
             </Button>
           </div>
+        </div>
+      </Modal>
+      <Modal
+        isOpen={isEditModalOpen}
+        onRequestClose={() => setIsEditModalOpen(false)}
+        ariaHideApp={false}
+        style={{
+          content: {
+            width: "40%",
+            height: "50%",
+            margin: "auto",
+            padding: "20px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          },
+          overlay: {
+            backgroundColor: "rgba(0, 0, 0, 0.75)",
+          },
+        }}
+      >
+        <h3>Edit Voting Settings</h3>
+        <TextField
+          label="Vote"
+          type="number"
+          value={vote}
+          onChange={(e) => setVote(Number(e.target.value))}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Start Date"
+          type="datetime-local"
+          value={new Date(startDate).toISOString().slice(0, 16)}
+          onChange={(e) => setStartDate(new Date(e.target.value))}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="End Date"
+          type="datetime-local"
+          value={new Date(endDate).toISOString().slice(0, 16)}
+          onChange={(e) => setEndDate(new Date(e.target.value))}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Status"
+          select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          fullWidth
+          margin="normal"
+        >
+          <MenuItem value="active">Active</MenuItem>
+          <MenuItem value="inactive">Inactive</MenuItem>
+        </TextField>
+        <FormControlLabel
+          control={
+            <Checkbox checked={visible} onChange={() => setVisible(!visible)} />
+          }
+          label="Visible"
+        />
+
+        <div
+          style={{
+            marginTop: "20px",
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%",
+          }}
+        >
+          <Button
+            variant="contained"
+            color="error"
+            sx={{ mt: 2 }}
+            onClick={() => setIsEditModalOpen(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2 }}
+            onClick={handleSaveVoteSettings}
+          >
+            Save
+          </Button>
         </div>
       </Modal>
     </div>
