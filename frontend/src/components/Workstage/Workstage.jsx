@@ -57,13 +57,13 @@ const Workstage = ({
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [status, setStatus] = useState("active");
-  const [visible, setVisible] = useState(true);
+  const [visiable, setVisible] = useState(true);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false); // New modal state
 
   // Handle modal form submission
   const handleSaveVoteSettings = () => {
-    const updatedData = { vote, startDate, endDate, status, visible };
+    const updatedData = { vote, startDate, endDate, status, visiable };
     console.log("Saving vote settings:", updatedData);
 
     // Example: Submit the data to the backend
@@ -312,6 +312,11 @@ const Workstage = ({
 
         setText(text);
         setSelectedApparel(selectedApparel);
+        setVote(response.data.vote);
+        setStartDate(response.data.startDate);
+        setEndDate(response.data.endDate);
+        setStatus(response.data.status);
+        setVisible(response.data.visiable);
       } catch (error) {
         console.error("Error fetching cart items:", error);
       }
@@ -418,7 +423,6 @@ const Workstage = ({
         style={{
           content: {
             width: "60%",
-            height: "60%",
             margin: "auto",
             padding: "20px",
             display: "flex",
@@ -478,7 +482,7 @@ const Workstage = ({
         style={{
           content: {
             width: "40%",
-            height: "50%",
+
             margin: "auto",
             padding: "20px",
             display: "flex",
@@ -528,7 +532,10 @@ const Workstage = ({
         </TextField>
         <FormControlLabel
           control={
-            <Checkbox checked={visible} onChange={() => setVisible(!visible)} />
+            <Checkbox
+              checked={visiable}
+              onChange={() => setVisible(!visiable)}
+            />
           }
           label="Visible"
         />
