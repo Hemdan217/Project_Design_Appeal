@@ -193,6 +193,10 @@ const EditSpace = () => {
                   materialName={materialName}
                   setMaterialName={setMaterialName}
                   onFinalImageReady={handleFinalImageReady}
+                  onColorChange={(newColor) => {
+                    pushToUndoStack({ color: newColor });
+                    setColor(newColor);
+                  }}
                 />
               </Item>
             </Grid>

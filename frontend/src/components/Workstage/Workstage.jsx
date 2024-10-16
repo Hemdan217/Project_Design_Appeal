@@ -31,6 +31,7 @@ const Workstage = ({
   setImage,
   setMaterialPrice,
   setMaterialName,
+  onColorChange,
 }) => {
   const navigate = useNavigate();
   const stageWidth = 850;
@@ -307,6 +308,7 @@ const Workstage = ({
         } = response.data;
         setImageDataURL(imageDataURL);
         setColor(color);
+        onColorChange(color);
         setMaterialName(materialName);
         setMaterialPrice(materialPrice);
 

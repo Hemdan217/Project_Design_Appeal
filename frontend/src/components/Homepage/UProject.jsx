@@ -154,8 +154,12 @@ export default function ProductCategories() {
                   variant="h6"
                   color="inherit"
                   className="imageTitle"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleClick("/voting/" + image._id); // Handle clickvoting/670f14d0142494dc3f81a82a
+                  }}
                 >
-                  {image.title}
+                  Votes
                   <div className="imageMarked" />
                 </Typography>
               </Box>

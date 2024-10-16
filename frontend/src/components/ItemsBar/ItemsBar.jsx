@@ -21,11 +21,19 @@ import TextIcon from "@mui/icons-material/TextFields";
 import ImageIcon from "@mui/icons-material/Image";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { CirclePicker } from "react-color";
-import axios from 'axios'; // Import axios for API requests
+import axios from "axios"; // Import axios for API requests
 import "./ItemsBar.css";
+import { useParams } from "react-router-dom";
 
-const ItemsBar = ({ onToggleSidebar, onColorChange, onTextChange, onImageUpload , onMaterialSelect }) => {
+const ItemsBar = ({
+  onToggleSidebar,
+  onColorChange,
+  onTextChange,
+  onImageUpload,
+  onMaterialSelect,
+}) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { id } = useParams();
   const [sidebarView, setSidebarView] = useState("None");
   const [color, setColor] = useState("#ffffff");
   const [text, setText] = useState("");
@@ -34,15 +42,46 @@ const ItemsBar = ({ onToggleSidebar, onColorChange, onTextChange, onImageUpload 
   const [materialOptions, setMaterialOptions] = useState([]);
 
   useEffect(() => {
-    axios.get('/api/materials') 
-      .then(response => {
+    axios
+      .get("/api/materials")
+      .then((response) => {
         setMaterialOptions(response.data);
       })
-      .catch(error => {
-        console.error('Error fetching materials:', error);
+      .catch((error) => {
+        console.error("Error fetching materials:", error);
       });
   }, []);
 
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        const response = await axios.get(`/api/cart/new_project/${id}`);
+        const {
+          imageDataURL,
+          color,
+          materialName,
+          materialPrice,
+          colorPrice,
+          imagePrice,
+          textPrice,
+          text,
+          selectedApparel,
+          totalPrice,
+          quantity,
+        } = response.data;
+        handleColorChange(color);
+        setText(text);
+        onTextChange(text);
+        setSelectedMaterial(materialName);
+        // onMaterialSelect(selected);
+      } catch (error) {
+        console.error("Error fetching cart items:", error);
+      }
+    };
+    if (id) {
+      fetchProject();
+    }
+  }, [id]);
   const clickHandler = (view) => {
     setIsSidebarOpen(true);
     setSidebarView(view);
@@ -78,7 +117,9 @@ const ItemsBar = ({ onToggleSidebar, onColorChange, onTextChange, onImageUpload 
   };
 
   const handleMaterialChange = (event) => {
-    const selected = materialOptions.find(material => material.name === event.target.value);
+    const selected = materialOptions.find(
+      (material) => material.name === event.target.value
+    );
     setSelectedMaterial(selected.name);
     onMaterialSelect(selected);
   };
@@ -122,7 +163,10 @@ const ItemsBar = ({ onToggleSidebar, onColorChange, onTextChange, onImageUpload 
                 <h2>Material Options</h2>
                 <FormControl component="fieldset">
                   <FormLabel component="legend">Select Material</FormLabel>
-                  <RadioGroup value={selectedMaterial} onChange={handleMaterialChange}>
+                  <RadioGroup
+                    value={selectedMaterial}
+                    onChange={handleMaterialChange}
+                  >
                     {materialOptions.map((material) => (
                       <FormControlLabel
                         key={material.name}
@@ -138,22 +182,25 @@ const ItemsBar = ({ onToggleSidebar, onColorChange, onTextChange, onImageUpload 
             {sidebarView === "Color" && (
               <div>
                 <h2>Color Options</h2>
-                <CirclePicker color={color} onChangeComplete={handleColorChange} />
+                <CirclePicker
+                  color={color}
+                  onChangeComplete={handleColorChange}
+                />
               </div>
             )}
             {sidebarView === "Text" && (
               <div>
                 <h2>Text Options</h2>
                 <TextField
-      label="Enter Text"
-      value={text}
-      onChange={handleTextChange}
-      InputProps={{
-        style: {
-          backgroundColor: "white",
-        },
-      }}
-    />
+                  label="Enter Text"
+                  value={text}
+                  onChange={handleTextChange}
+                  InputProps={{
+                    style: {
+                      backgroundColor: "white",
+                    },
+                  }}
+                />
               </div>
             )}
             {sidebarView === "Image" && (
