@@ -114,7 +114,7 @@ export default function ProductCategories() {
         >
           Your Projects
         </Typography>
-        <Box sx={{ mt: 8, display: "flex", flexWrap: "wrap" }}>
+        <Box sx={{ mt: 8, display: "flex", flexWrap: "wrap", gap: 5 }}>
           {projects.map((image) => (
             <ImageIconButton
               key={image.imageDataURL}

@@ -372,7 +372,7 @@ const Workstage = ({
   return (
     <div ref={containerRef} style={{ width: "100%", height: "100%" }}>
       <div>
-        <Typography>Total Price: ${totalPrice}</Typography>
+        <Typography>Total Price: Rs {totalPrice}</Typography>
         <Button
           variant="contained"
           color="primary"

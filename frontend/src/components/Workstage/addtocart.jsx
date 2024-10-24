@@ -334,14 +334,14 @@ const AddToCart = () => {
                                 <Grid item xs={6}>
                                   {item.imageDataURL && (
                                     <Typography variant="body2">
-                                      Image: ${item.imagePrice.toFixed(2)}
+                                      Image: Rs {item.imagePrice.toFixed(2)}
                                     </Typography>
                                   )}
                                 </Grid>
                               </Grid>
                               <Divider sx={{ my: 1 }} />
                               <Typography variant="h6">
-                                Total Price: ${item.totalPrice.toFixed(2)}
+                                Total Price: Rs {item.totalPrice.toFixed(2)}
                               </Typography>
                             </Box>
                           </Grid>
